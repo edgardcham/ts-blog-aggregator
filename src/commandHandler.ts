@@ -1,10 +1,12 @@
 import { readConfig, setUser } from './config.js';
+import { createFeed } from './lib/queries/feeds.js';
 import {
     createUser,
     getUserByName,
     getUsers,
     resetUsersTable,
 } from './lib/queries/users.js';
+import { fetcFeed } from './rss.js';
 
 export type CommandHandler = (
     cmdName: string,
@@ -54,6 +56,26 @@ export async function handlerUsers(cmdName: string, ...args: string[]) {
             console.log(`* ${user.name}`);
         }
     });
+}
+
+export async function handlerAgg(cmdName: string, ...args: string[]) {
+    if (args.length === 0) {
+        throw new Error('No feed URL provided');
+    }
+    const feedURL = args[0];
+    const feed = await fetcFeed(feedURL);
+    console.log(feed.channel);
+}
+
+export async function handlerAddFeed(cmdName: string, ...args: string[]) {
+    if (args.length === 0) {
+        throw new Error('No feed name and URL provided');
+    } else if (args.length === 1) {
+        throw new Error('No URL provided');
+    }
+    const feedName = args[0];
+    const feedURL = args[1];
+    await createFeed(feedName, feedURL);
 }
 
 export async function registerCommand(

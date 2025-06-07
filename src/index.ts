@@ -1,6 +1,8 @@
 import { readConfig } from './config.js';
 import {
     type CommandRegistry,
+    handlerAddFeed,
+    handlerAgg,
     handlerLogin,
     handlerRegister,
     handlerReset,
@@ -16,7 +18,8 @@ async function main() {
     registerCommand(registry, 'register', handlerRegister);
     registerCommand(registry, 'reset', handlerReset);
     registerCommand(registry, 'users', handlerUsers);
-
+    registerCommand(registry, 'agg', handlerAgg);
+    registerCommand(registry, 'addfeed', handlerAddFeed);
     const args = process.argv.slice(2);
     const cmdName = args[0];
     const cmdArgs = args.slice(1);
