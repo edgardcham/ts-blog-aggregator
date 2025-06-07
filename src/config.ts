@@ -1,25 +1,26 @@
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 export type Config = {
     dbUrl: string;
     currentUserName: string | null;
 };
 
-export function setUser(currentUserName: string): void {
-    const config = readConfig();
+export async function setUser(currentUserName: string): Promise<void> {
+    const config = await readConfig();
     config.currentUserName = currentUserName;
-    writeConfig(config);
+    await writeConfig(config);
 }
 
-export function readConfig(): Config {
-    const configPath = path.join(process.cwd(), '/config/.gatorconfig.json');
+export async function readConfig(): Promise<Config> {
+    const configPath = path.join(os.homedir(), '.gatorconfig.json');
     const rawConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    return validateConfig(rawConfig);
+    return await validateConfig(rawConfig);
 }
 
-function writeConfig(cfg: Config): void {
-    const configPath = path.join(process.cwd(), '/config/.gatorconfig.json');
+async function writeConfig(cfg: Config): Promise<void> {
+    const configPath = path.join(os.homedir(), '.gatorconfig.json');
     const fileConfig = {
         db_url: cfg.dbUrl,
         current_user_name: cfg.currentUserName,
@@ -27,7 +28,7 @@ function writeConfig(cfg: Config): void {
     fs.writeFileSync(configPath, JSON.stringify(fileConfig, null, 2));
 }
 
-function validateConfig(rawConfig: any): Config {
+async function validateConfig(rawConfig: any): Promise<Config> {
     if (!rawConfig.db_url) {
         throw new Error('dbUrl is required');
     }

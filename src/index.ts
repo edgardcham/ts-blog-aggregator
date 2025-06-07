@@ -2,14 +2,16 @@ import { readConfig } from './config.js';
 import {
     type CommandRegistry,
     handlerLogin,
+    handlerRegister,
     registerCommand,
     runCommand,
 } from './commandHandler.js';
 
-function main() {
-    readConfig();
+async function main() {
+    const config = await readConfig();
     const registry: CommandRegistry = {};
     registerCommand(registry, 'login', handlerLogin);
+    registerCommand(registry, 'register', handlerRegister);
 
     const args = process.argv.slice(2);
     const cmdName = args[0];
@@ -19,8 +21,17 @@ function main() {
         console.error('No command provided');
         process.exit(1);
     }
-
-    runCommand(registry, cmdName, ...cmdArgs);
+    try {
+        await runCommand(registry, cmdName, ...cmdArgs);
+        process.exit(0);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error('An unknown error occurred');
+        }
+        process.exit(1);
+    }
 }
 
 main();

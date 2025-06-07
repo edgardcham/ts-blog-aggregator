@@ -15,3 +15,4 @@ Gator is a CLI tool that allows user tos:
 - Use SQL to query and migrate a database (using `drizzle`)
 - Long-running service to continuously fetch new posts from RSS feeds and stores them in the Database.
 
+Note: add documentation about drizzle-kit, schema, drizzle.config.ts, etc
