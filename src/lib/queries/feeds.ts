@@ -1,5 +1,5 @@
 import { db } from '../index.js';
-import { type User, type Feed, feeds } from '../schema.js';
+import { type User, type Feed, feeds, users } from '../schema.js';
 import { eq } from 'drizzle-orm';
 import { getUserByName } from './users.js';
 import { readConfig } from '../../config.js';
@@ -33,4 +33,17 @@ export async function getFeedByName(name: string) {
 
 export async function printFeed(feed: Feed, user: User) {
     console.log(`${user.name} - ${feed.name} - ${feed.url}`);
+}
+
+export async function getFeeds() {
+    const results = await db
+        .select()
+        .from(feeds)
+        .innerJoin(users, eq(feeds.user_id, users.id));
+    results.forEach((result) => {
+        console.log(
+            `${result.users.name} - ${result.feeds.name} - ${result.feeds.url}`,
+        );
+    });
+    return results;
 }

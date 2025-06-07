@@ -1,5 +1,5 @@
 import { readConfig, setUser } from './config.js';
-import { createFeed } from './lib/queries/feeds.js';
+import { createFeed, getFeeds, printFeed } from './lib/queries/feeds.js';
 import {
     createUser,
     getUserByName,
@@ -76,6 +76,10 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]) {
     const feedName = args[0];
     const feedURL = args[1];
     await createFeed(feedName, feedURL);
+}
+
+export async function handlerFeeds(cmdName: string, ...args: string[]) {
+    await getFeeds();
 }
 
 export async function registerCommand(

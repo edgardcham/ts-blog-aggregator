@@ -3,6 +3,7 @@ import {
     type CommandRegistry,
     handlerAddFeed,
     handlerAgg,
+    handlerFeeds,
     handlerLogin,
     handlerRegister,
     handlerReset,
@@ -20,6 +21,7 @@ async function main() {
     registerCommand(registry, 'users', handlerUsers);
     registerCommand(registry, 'agg', handlerAgg);
     registerCommand(registry, 'addfeed', handlerAddFeed);
+    registerCommand(registry, 'feeds', handlerFeeds);
     const args = process.argv.slice(2);
     const cmdName = args[0];
     const cmdArgs = args.slice(1);
