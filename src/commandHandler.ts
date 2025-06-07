@@ -1,5 +1,10 @@
-import { setUser } from './config.js';
-import { createUser, getUserByName } from './lib/queries/users.js';
+import { readConfig, setUser } from './config.js';
+import {
+    createUser,
+    getUserByName,
+    getUsers,
+    resetUsersTable,
+} from './lib/queries/users.js';
 
 export type CommandHandler = (
     cmdName: string,
@@ -32,6 +37,23 @@ export async function handlerRegister(cmdName: string, ...args: string[]) {
     }
     await setUser(userName);
     console.log(`Registered user ${userName} and logged in`);
+}
+
+export async function handlerReset(cmdName: string, ...args: string[]) {
+    await resetUsersTable();
+    console.log('Users table reset');
+}
+
+export async function handlerUsers(cmdName: string, ...args: string[]) {
+    const users = await getUsers();
+    const currentUser = (await readConfig()).currentUserName;
+    users.forEach((user) => {
+        if (user.name === currentUser) {
+            console.log(`* ${user.name} (current)`);
+        } else {
+            console.log(`* ${user.name}`);
+        }
+    });
 }
 
 export async function registerCommand(
