@@ -1,5 +1,14 @@
 import { readConfig, setUser } from './config.js';
-import { createFeed, getFeeds, printFeed } from './lib/queries/feeds.js';
+import {
+    createFeedFollow,
+    getFeedFollowsForUser,
+} from './lib/queries/feedFollows.js';
+import {
+    createFeed,
+    getFeedByURL,
+    getFeeds,
+    printFeed,
+} from './lib/queries/feeds.js';
 import {
     createUser,
     getUserByName,
@@ -75,11 +84,60 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]) {
     }
     const feedName = args[0];
     const feedURL = args[1];
-    await createFeed(feedName, feedURL);
+    const config = await readConfig();
+    if (!config.currentUserName) {
+        throw new Error('No user logged in');
+    }
+    const user = await getUserByName(config.currentUserName);
+    if (!user) {
+        throw new Error('User is not registered');
+    }
+    const feed = await createFeed(feedName, feedURL);
+    await createFeedFollow(feed.id, user.id);
+    console.log(`${user.name} - Followed ${feedName} - ${feedURL}`);
 }
 
 export async function handlerFeeds(cmdName: string, ...args: string[]) {
     await getFeeds();
+}
+
+export async function handlerFollow(cmdName: string, ...args: string[]) {
+    if (args.length === 0) {
+        throw new Error('No URL provided');
+    }
+    const config = await readConfig();
+    if (!config.currentUserName) {
+        throw new Error('No user logged in');
+    }
+    const user = await getUserByName(config.currentUserName);
+    if (!user) {
+        throw new Error('No user logged in');
+    }
+    const feedURL = args[0];
+    const feed = await getFeedByURL(feedURL);
+    if (!feed) {
+        throw new Error('Feed not found');
+    }
+    const feedId = feed.id;
+    const feedFollow = await createFeedFollow(feedId, user.id);
+    console.log(feedFollow);
+}
+
+export async function handlerFollowing(cmdName: string, ...args: string[]) {
+    const config = await readConfig();
+    if (!config.currentUserName) {
+        throw new Error('No user logged in');
+    }
+    const user = await getUserByName(config.currentUserName);
+    if (!user) {
+        throw new Error('No user logged in');
+    }
+    const feedFollows = await getFeedFollowsForUser(user.id);
+    feedFollows.forEach((feedFollow) => {
+        console.log(
+            `${feedFollow.users.name} - ${feedFollow.feeds.name} - ${feedFollow.feeds.url}`,
+        );
+    });
 }
 
 export async function registerCommand(

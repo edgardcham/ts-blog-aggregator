@@ -5,7 +5,6 @@ import { getUserByName } from './users.js';
 import { readConfig } from '../../config.js';
 
 export async function createFeed(name: string, url: string) {
-    // get current logged in user from config and then DB
     const config = await readConfig();
     if (!config.currentUserName) {
         throw new Error('No user logged in');
@@ -46,4 +45,14 @@ export async function getFeeds() {
         );
     });
     return results;
+}
+
+export async function getFeedById(id: string) {
+    const [result] = await db.select().from(feeds).where(eq(feeds.id, id));
+    return result;
+}
+
+export async function getFeedByURL(url: string) {
+    const [result] = await db.select().from(feeds).where(eq(feeds.url, url));
+    return result;
 }
