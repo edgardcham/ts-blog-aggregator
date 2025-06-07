@@ -1,0 +1,18 @@
+{
+  "name": "ts-blog-aggregator",
+  "version": "1.0.0",
+  "description": "This project is an RSS feed aggregator built in TypeScript. It's calle Gator.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
